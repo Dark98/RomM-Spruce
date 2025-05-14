@@ -498,7 +498,18 @@ class API:
         for i, rom in enumerate(self.status.download_queue):
             self.status.downloading_rom = rom
             self.status.downloading_rom_position = i + 1
-            dest_path = os.path.join(
+            if rom.platform_slug == "nes":
+                dest_path = os.path.join(
+                self.file_system.get_platforms_storage_path("FC"),
+                self._sanitize_filename(rom.fs_name),
+            )
+            elif rom.platform_slug == "snes":
+                dest_path = os.path.join(
+                self.file_system.get_platforms_storage_path("SFC"),
+                self._sanitize_filename(rom.fs_name),
+            )
+            else:
+                dest_path = os.path.join(
                 self.file_system.get_platforms_storage_path(rom.platform_slug.upper()),
                 self._sanitize_filename(rom.fs_name),
             )

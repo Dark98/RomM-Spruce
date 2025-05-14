@@ -62,7 +62,7 @@ MUOS_SUPPORTED_PLATFORMS_FS_MAP = {
     "fds": "Nintendo FDS",
     "gba": "Nintendo Game Boy Advance",
     "gbc": "Nintendo Game Boy Color",
-    "GB": "Nintendo Game Boy",
+    "gb": "Nintendo Game Boy",
     "n64": "Nintendo N64",
     "nes": "Nintendo NES-Famicom",
     "famicom": "Nintendo NES-Famicom",

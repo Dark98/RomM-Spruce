@@ -9,7 +9,7 @@ class Filesystem:
     _instance: Optional["Filesystem"] = None
 
     # Check if the app is running on muOS
-    is_muos = os.path.exists("/mnt/mmc/MUOS")
+    is_muos = True
 
     # Storage paths for ROMs
     _sd1_roms_storage_path: str
@@ -30,8 +30,8 @@ class Filesystem:
 
         # ROMs storage path
         if self.is_muos:
-            self._sd1_roms_storage_path = "/mnt/mmc/ROMS"
-            self._sd2_roms_storage_path = "/mnt/sdcard/ROMS"
+            self._sd1_roms_storage_path = "/mnt/SDCARD/Roms"
+            self._sd2_roms_storage_path = None
         else:
             # Go up two levels from the script's directory (e.g., from roms/ports/romm to roms/)
             base_path = os.path.abspath(os.path.join(os.getcwd(), "..", "..", ".."))
@@ -122,8 +122,19 @@ class Filesystem:
 
     def is_rom_in_device(self, rom: Rom) -> bool:
         """Check if a ROM exists in the storage path."""
-        rom_path = os.path.join(
-            self.get_platforms_storage_path(rom.platform_slug.upper()),
+        if rom.platform_slug == "nes":
+            rom_path = os.path.join(
+            self.get_platforms_storage_path("FC"),
             rom.fs_name if not rom.multi else f"{rom.fs_name}.m3u",
-        )
+            )
+        elif rom.platform_slug == "snes":
+            rom_path = os.path.join(
+                self.get_platforms_storage_path("SFC"),
+                rom.fs_name if not rom.multi else f"{rom.fs_name}.m3u",
+            )
+        else:
+            rom_path = os.path.join(
+                self.get_platforms_storage_path(rom.platform_slug.upper()),
+                rom.fs_name if not rom.multi else f"{rom.fs_name}.m3u",
+            )
         return os.path.exists(rom_path)
