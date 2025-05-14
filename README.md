@@ -10,8 +10,6 @@
 <br>
 
 [![license-badge-img]][license-badge]
-[![release-badge-img]][release-badge]
-[![discord-badge-img]][discord-badge]
 
 <!-- [![wiki-badge-img]][wiki] -->
 
@@ -45,20 +43,7 @@ We use PortMaster to run the app on our device.
 
 If you have any issues with the app, please [open an issue](https://github.com/Dark98/RomM-Spruce/issues/new) in this repository. If the issue is with RomM itself, open an issue in the [RomM repository](https://github.com/rommapp/romm/issues/new/choose).
 
-Join us on Discord, where you can ask questions, submit ideas, get help, showcase your collection, and discuss RomM with other users. You can also find our team is the [muOS Discord](https://discord.com/invite/muos).
-
-[![discord-invite]][discord-invite-url]
-
 <!-- Badges -->
 
 [license-badge-img]: https://img.shields.io/github/license/rommapp/muos-app?style=for-the-badge&color=a32d2a
 [license-badge]: LICENSE
-[release-badge-img]: https://img.shields.io/github/v/release/rommapp/muos-app?style=for-the-badge
-[release-badge]: 
-[discord-badge-img]: https://img.shields.io/badge/discord-7289da?style=for-the-badge
-[discord-badge]:
-
-<!-- Links -->
-
-[discord-invite]: https://invidget.switchblade.xyz
-[discord-invite-url]: 
