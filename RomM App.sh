@@ -51,6 +51,10 @@ use_runtime() {
     export PATH="${python_dir}/bin:$PATH"
     export LD_LIBRARY_PATH="${python_dir}/libs:${LD_LIBRARY_PATH}"
     python="${python_dir}/bin/python3"
+	
+    $python -m pip install -U pysdl2
+    $python -m pip install -U dotenv
+    $python -m pip install -U semver
 }
 
 # Default to system python3

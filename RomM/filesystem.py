@@ -34,7 +34,7 @@ class Filesystem:
             self._sd2_roms_storage_path = "/mnt/sdcard/ROMS"
         else:
             # Go up two levels from the script's directory (e.g., from roms/ports/romm to roms/)
-            base_path = os.path.abspath(os.path.join(os.getcwd(), "..", ".."))
+            base_path = os.path.abspath(os.path.join(os.getcwd(), "..", "..", ".."))
             # Default to the ROMs directory, overridable via environment variable
             self._sd1_roms_storage_path = os.environ.get("ROMS_STORAGE_PATH", base_path)
             self._sd2_roms_storage_path = None

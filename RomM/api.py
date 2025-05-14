@@ -499,7 +499,7 @@ class API:
             self.status.downloading_rom = rom
             self.status.downloading_rom_position = i + 1
             dest_path = os.path.join(
-                self.file_system.get_platforms_storage_path(rom.platform_slug),
+                self.file_system.get_platforms_storage_path(rom.platform_slug.upper()),
                 self._sanitize_filename(rom.fs_name),
             )
             url = f"{self.host}/{self._roms_endpoint}/{rom.id}/content/{quote(rom.fs_name)}?hidden_folder=true"
