@@ -123,7 +123,7 @@ class Filesystem:
     def is_rom_in_device(self, rom: Rom) -> bool:
         """Check if a ROM exists in the storage path."""
         rom_path = os.path.join(
-            self.get_platforms_storage_path(rom.platform_slug),
+            self.get_platforms_storage_path(rom.platform_slug.upper()),
             rom.fs_name if not rom.multi else f"{rom.fs_name}.m3u",
         )
         return os.path.exists(rom_path)
