@@ -605,19 +605,28 @@ class RomM:
                 ]
 
                 if self.fs.is_rom_in_device(selected_rom):
+                    if selected_rom.platform_slug == "nes":
+                        rom_path = os.path.join(
+                            self.fs.get_platforms_storage_path("FC"),
+                                selected_rom.fs_name,
+                        )
+                    elif selected_rom.platform_slug == "snes":
+                        rom_path = os.path.join(
+                            self.fs.get_platforms_storage_path("SFC"),
+                            selected_rom.fs_name,
+                            )
+                    else:
+                        rom_path = os.path.join(
+                            self.fs.get_platforms_storage_path(selected_rom.platform_slug.upper()),
+                            selected_rom.fs_name,
+                        )
+
                     self.contextual_menu_options.append(
                         (
                             f"{glyphs.delete} Remove from device",
                             1,
-                            lambda: os.remove(
-                                os.path.join(
-                                    self.fs.get_platforms_storage_path(
-                                        selected_rom.platform_slug
-                                    ),
-                                    selected_rom.fs_name,
-                                )
-                            ),
-                        ),
+                            lambda: os.remove(rom_path),
+                        )
                     )
             else:
                 self.contextual_menu_options = []
