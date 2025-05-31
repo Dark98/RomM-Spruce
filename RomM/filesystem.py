@@ -8,9 +8,6 @@ from models import Rom
 class Filesystem:
     _instance: Optional["Filesystem"] = None
 
-    # Check if the app is running on muOS
-    is_muos = True
-
     # Storage paths for ROMs
     _sd1_roms_storage_path: str
     _sd2_roms_storage_path: str | None
@@ -29,15 +26,8 @@ class Filesystem:
             os.makedirs(self.resources_path, exist_ok=True)
 
         # ROMs storage path
-        if self.is_muos:
-            self._sd1_roms_storage_path = "/mnt/SDCARD/Roms"
-            self._sd2_roms_storage_path = None
-        else:
-            # Go up two levels from the script's directory (e.g., from roms/ports/romm to roms/)
-            base_path = os.path.abspath(os.path.join(os.getcwd(), "..", "..", ".."))
-            # Default to the ROMs directory, overridable via environment variable
-            self._sd1_roms_storage_path = os.environ.get("ROMS_STORAGE_PATH", base_path)
-            self._sd2_roms_storage_path = None
+        self._sd1_roms_storage_path = "/mnt/SDCARD/Roms"
+        self._sd2_roms_storage_path = None
 
         # Ensure the ROMs storage path exists
         if self._sd2_roms_storage_path and not os.path.exists(
@@ -65,23 +55,13 @@ class Filesystem:
         return self._sd2_roms_storage_path
 
     def _get_platform_storage_dir_from_mapping(self, platform: str) -> str:
-        """Return the platform-specific storage path, using MUOS mapping if on muOS,
-        or using ES mapping if available."""
-
-        # First check if the platform has an entry in the ES map
-        platform_dir = platform_maps._ES_FOLDER_MAP.get(platform, platform)
-
-        # If the ES map returns a tuple, use the first element of the tuple
-        if isinstance(platform_dir, tuple):
-            platform_dir = platform_dir[0]
-
-        # If running on muOS, override the platform_dir with the MUOS mapping
-        if self.is_muos:
-            platform_dir = platform_maps.MUOS_SUPPORTED_PLATFORMS_FS_MAP.get(
-                platform, platform_dir
-            )
-
+        """Return the platform-specific storage path."""
+        platform_dir = platform_maps.SUPPORTED_PLATFORMS_FS_MAP.get(platform)
+        if platform_dir is None:
+            raise ValueError(f"[RomM] Unsupported platform slug '{platform}' — please add it to SUPPORTED_PLATFORMS_FS_MAP")
         return platform_dir
+
+
 
     def _get_sd1_platforms_storage_path(self, platform: str) -> str:
         platforms_dir = self._get_platform_storage_dir_from_mapping(platform)
@@ -122,19 +102,8 @@ class Filesystem:
 
     def is_rom_in_device(self, rom: Rom) -> bool:
         """Check if a ROM exists in the storage path."""
-        if rom.platform_slug == "nes":
-            rom_path = os.path.join(
-            self.get_platforms_storage_path("FC"),
+        rom_path = os.path.join(
+            self.get_platforms_storage_path(rom.platform_slug),
             rom.fs_name if not rom.multi else f"{rom.fs_name}.m3u",
-            )
-        elif rom.platform_slug == "snes":
-            rom_path = os.path.join(
-                self.get_platforms_storage_path("SFC"),
-                rom.fs_name if not rom.multi else f"{rom.fs_name}.m3u",
-            )
-        else:
-            rom_path = os.path.join(
-                self.get_platforms_storage_path(rom.platform_slug.upper()),
-                rom.fs_name if not rom.multi else f"{rom.fs_name}.m3u",
-            )
+        )
         return os.path.exists(rom_path)

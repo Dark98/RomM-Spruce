@@ -149,9 +149,7 @@ class API:
 
     def _fetch_platform_icon(self, platform_slug) -> None:
         try:
-            mapped_slug, icon_filename = platform_maps._ES_FOLDER_MAP.get(
-                platform_slug.lower(), (platform_slug, platform_slug)
-            )
+            icon_filename = platform_slug
             icon_url = f"{self.host}/{self._platform_icon_url}/{icon_filename}.ico"
             request = Request(
                 f"{self.host}/{self._platform_icon_url}/{icon_filename}.ico",
@@ -237,37 +235,14 @@ class API:
         platforms = json.loads(response.read().decode("utf-8"))
         _platforms: list[Platform] = []
 
-        # Get the list of subfolders in the ROMs directory for non-muOS filtering
-        roms_subfolders = set()
-        if not self.file_system.is_muos:
-            roms_path = self.file_system.get_roms_storage_path()
-            print(f"ROMs path: {roms_path}")
-            if os.path.exists(roms_path):
-                roms_subfolders = {
-                    d.lower()
-                    for d in os.listdir(roms_path)
-                    if os.path.isdir(os.path.join(roms_path, d))
-                }
-
         for platform in platforms:
             if platform["rom_count"] > 0:
                 platform_slug = platform["slug"].lower()
-                if self.file_system.is_muos:
-                    if (
-                        platform_slug not in platform_maps.MUOS_SUPPORTED_PLATFORMS
-                        or platform_slug in self._exclude_platforms
-                    ):
-                        continue
-                else:
-                    # Map the slug to the folder name for non-muOS
-                    mapped_folder, icon_file = platform_maps._ES_FOLDER_MAP.get(
-                        platform_slug.lower(), (platform_slug, platform_slug)
-                    )
-                    if (
-                        mapped_folder.lower() not in roms_subfolders
-                        or platform_slug in self._exclude_platforms
-                    ):
-                        continue
+                if (
+                    platform_slug not in platform_maps.SUPPORTED_PLATFORMS
+                    or platform_slug in self._exclude_platforms
+                ):
+                    continue
 
                 _platforms.append(
                     Platform(
@@ -432,29 +407,11 @@ class API:
         if isinstance(roms, dict):
             roms = roms["items"]
 
-        # Get the list of subfolders in the ROMs directory for non-muOS filtering
-        roms_subfolders = set()
-        if not self.file_system.is_muos:
-            roms_path = self.file_system.get_roms_storage_path()
-            if os.path.exists(roms_path):
-                roms_subfolders = {
-                    d.lower()
-                    for d in os.listdir(roms_path)
-                    if os.path.isdir(os.path.join(roms_path, d))
-                }
-
         _roms = []
         for rom in roms:
             platform_slug = rom["platform_slug"].lower()
-            if self.file_system.is_muos:
-                if platform_slug not in platform_maps.MUOS_SUPPORTED_PLATFORMS:
-                    continue
-            else:
-                mapped_folder, icon_file = platform_maps._ES_FOLDER_MAP.get(
-                    platform_slug.lower(), (platform_slug, platform_slug)
-                )
-                if mapped_folder.lower() not in roms_subfolders:
-                    continue
+            if platform_slug not in platform_maps.SUPPORTED_PLATFORMS:
+                continue
             if view == View.PLATFORMS and platform_slug != selected_platform_slug:
                 continue
             _roms.append(
@@ -498,21 +455,9 @@ class API:
         for i, rom in enumerate(self.status.download_queue):
             self.status.downloading_rom = rom
             self.status.downloading_rom_position = i + 1
-            if rom.platform_slug == "nes":
-                dest_path = os.path.join(
-                self.file_system.get_platforms_storage_path("FC"),
-                self._sanitize_filename(rom.fs_name),
-            )
-            elif rom.platform_slug == "snes":
-                dest_path = os.path.join(
-                self.file_system.get_platforms_storage_path("SFC"),
-                self._sanitize_filename(rom.fs_name),
-            )
-            else:
-                dest_path = os.path.join(
-                self.file_system.get_platforms_storage_path(rom.platform_slug.upper()),
-                self._sanitize_filename(rom.fs_name),
-            )
+            dest_path = os.path.join(
+            self.file_system.get_platforms_storage_path(rom.platform_slug),
+            self._sanitize_filename(rom.fs_name))
             url = f"{self.host}/{self._roms_endpoint}/{rom.id}/content/{quote(rom.fs_name)}?hidden_folder=true"
             os.makedirs(os.path.dirname(dest_path), exist_ok=True)
 
