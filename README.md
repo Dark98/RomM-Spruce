@@ -2,9 +2,9 @@
 <!-- trunk-ignore(markdownlint/MD041) -->
 <div align="center">
 
-  <img src=".github/resources/isotipo.png" height="180px" width="auto" alt="romm-muos logo">
+  <img src=".github/resources/isotipo.png" height="180px" width="auto" alt="romm-spruceos logo">
     <h3 style="font-size: 25px;">
-    A beautiful, powerful, RomM app for muOS.
+    A beautiful, powerful, RomM app for SpruceOS.
   </h3>
 
 <br>
